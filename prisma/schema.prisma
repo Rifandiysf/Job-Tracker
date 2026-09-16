@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum ApplicationStatus {
+  applied
+  interview
+  offer
+  rejected
+  accepted
+}
+
+enum ThemeMode {
+  light
+  dark
+}
+
+enum AuthProvider {
+  local
+  google
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  name             String?   @db.VarChar(255)
+  email            String    @unique @db.VarChar(255)
+  password         String?   @db.VarChar(255) // nullable: google-only users have no password
+  emailVerifiedAt  DateTime? @map("email_verified_at") // null = belum verifikasi email
+  homeAddress      String?   @map("home_address") @db.VarChar(255)
+  homeLat          Decimal?  @map("home_lat") @db.Decimal(10, 7)
+  homeLng          Decimal?  @map("home_lng") @db.Decimal(10, 7)
+  theme            ThemeMode @default(light)
+
+  // Auth / Google login
+  provider         AuthProvider @default(local)
+  googleId         String?      @unique @map("google_id") @db.VarChar(255)
+  avatarUrl        String?      @map("avatar_url") @db.VarChar(500)
+
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime? @updatedAt @map("updated_at")
+
+  jobApplications      JobApplication[]
+  passwordResetTokens  PasswordResetToken[]
+
+  @@map("users")
+}
+
+model JobApplication {
+  id              Int               @id @default(autoincrement())
+  userId          Int               @map("user_id")
+  companyName     String            @map("company_name") @db.VarChar(255)
+  position        String            @db.VarChar(255)
+  status          ApplicationStatus @default(applied)
+  appliedDate     DateTime?         @map("applied_date") @db.Date
+  companyAddress  String?           @map("company_address") @db.VarChar(255)
+  companyLat      Decimal?          @map("company_lat") @db.Decimal(10, 7)
+  companyLng      Decimal?          @map("company_lng") @db.Decimal(10, 7)
+  distanceKm      Decimal?          @map("distance_km") @db.Decimal(6, 2)
+  durationMin     Int?              @map("duration_min") // estimasi waktu tempuh dari OSRM, dalam menit
+  routeGeometry   Json?             @map("route_geometry") // cache array koordinat rute dari OSRM
+  routeFetchedAt  DateTime?         @map("route_fetched_at") // kapan rute terakhir di-fetch
+  notes           String?           @db.Text
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime? @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@map("job_applications")
+}
+
+model PasswordResetToken {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  token     String    @unique @db.VarChar(255)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at") // null jika belum dipakai
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@map("password_reset_tokens")
+}
