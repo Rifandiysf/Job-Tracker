@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
-import passport from "./config/passport";
-import routes from "./routes";
-import { notFoundHandler, errorHandler } from "./middlewares/error.middleware";
+import passport from "./config/passport.js";
+import routes from "./routes/index.routes.mjs";
+import { notFoundHandler, errorHandler } from "./middlewares/error.middleware.mjs";
 
 const app = express();
 

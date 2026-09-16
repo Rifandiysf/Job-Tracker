@@ -1,4 +1,4 @@
-import prisma from "../utils/prismaClient";
+import prisma from "../utils/prisma.client.mjs";
 
 function create(data) {
   return prisma.passwordResetToken.create({ data });
@@ -12,4 +12,4 @@ function markUsed(id) {
   return prisma.passwordResetToken.update({ where: { id }, data: { usedAt: new Date() } });
 }
 
-export default { create, findByToken, markUsed };
+export { create, findByToken, markUsed };

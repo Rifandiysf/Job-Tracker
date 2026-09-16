@@ -11,4 +11,4 @@ function error(res, statusCode, message, errors = null) {
     return res.status(statusCode).json(body);
 }
 
-export default { success, error };
+export { success, error };

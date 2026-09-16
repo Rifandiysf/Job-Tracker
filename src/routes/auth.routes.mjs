@@ -16,4 +16,4 @@ router.get(
     authController.googleCallback
 );
 
-export default authRoutes;
+export default router;

@@ -38,4 +38,4 @@ async function changePassword(req, res, next) {
   }
 }
 
-export default { getProfile, updateHomeAddress, updateTheme, changePassword };
+export { getProfile, updateHomeAddress, updateTheme, changePassword };

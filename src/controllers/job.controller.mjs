@@ -51,4 +51,4 @@ async function remove(req, res, next) {
   }
 }
 
-export default { create, list, detail, update, remove };
+export { create, list, detail, update, remove };

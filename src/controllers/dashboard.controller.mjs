@@ -10,4 +10,4 @@ async function summary(req, res, next) {
   }
 }
 
-export default { summary };
+export { summary };

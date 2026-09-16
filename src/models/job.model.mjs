@@ -52,7 +52,7 @@ function findAppliedDatesByUser(userId) {
   });
 }
 
-export default {
+export {
   create,
   findMany,
   count,
