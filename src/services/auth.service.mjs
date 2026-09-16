@@ -37,7 +37,7 @@ async function login({ email, password }) {
         throw err;
     }
 
-    const token = jwt.signToken({ id: user.id, email: user.email });
+    const token = signToken({ id: user.id, email: user.email });
     return { user: sanitizeUser(user), token };
 }
 
@@ -68,7 +68,7 @@ async function findOrCreateGoogleUser({ googleId, email, name, avatarUrl }) {
         }
     }
 
-    const token = jwt.signToken({ id: user.id, email: user.email });
+    const token = signToken({ id: user.id, email: user.email });
     return { user: sanitizeUser(user), token };
 }
 
