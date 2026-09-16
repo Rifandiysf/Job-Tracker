@@ -1,4 +1,4 @@
-import prisma from "../utils/prismaClient";
+import prisma from "../utils/prisma.client.mjs";
 
 function create(data) {
   return prisma.jobApplication.create({ data });

@@ -1,5 +1,5 @@
-import jobService from "../services/job.service";
-import { success } from "../utils/response";
+import jobService from "../services/job.service.mjs";
+import { success } from "../utils/response.mjs";
 
 async function create(req, res, next) {
   try {

@@ -1,4 +1,4 @@
-import jwt from "../utils/jwt.mjs";
+import { verifyToken } from "../utils/jwt.mjs";
 import { error } from "../utils/response.mjs";
 
 function authGuard(req, res, next) {
@@ -11,7 +11,7 @@ function authGuard(req, res, next) {
     const token = authHeader.split(" ")[1];
 
     try {
-        const decoded = jwt.verifyToken(token);
+        const decoded = verifyToken(token);
         req.user = decoded;
         next();
     } catch (err) {

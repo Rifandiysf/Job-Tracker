@@ -1,5 +1,5 @@
-import userService from "../services/user.service";
-import { success } from "../utils/response";
+import userService from "../services/user.service.mjs";
+import { success } from "../utils/response.mjs";
 
 async function getProfile(req, res, next) {
   try {

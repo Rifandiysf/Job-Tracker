@@ -1,5 +1,5 @@
-import dashboardService from "../services/dashboard.service";
-import { success } from "../utils/response";
+import dashboardService from "../services/dashboard.service.mjs";
+import { success } from "../utils/response.mjs";
 
 async function summary(req, res, next) {
   try {

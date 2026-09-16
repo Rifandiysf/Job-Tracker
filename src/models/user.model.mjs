@@ -1,4 +1,4 @@
-import prisma from "../utils/prismaClient";
+import prisma from "../utils/prisma.client.mjs";
 
 function findById(id) {
   return prisma.user.findUnique({ where: { id } });
