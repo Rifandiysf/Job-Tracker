@@ -29,7 +29,6 @@ function remove(id) {
   return prisma.jobApplication.delete({ where: { id } });
 }
 
-// Dipakai untuk dashboard: jumlah lamaran per status
 function groupByStatus(userId) {
   return prisma.jobApplication.groupBy({
     by: ["status"],
@@ -52,7 +51,7 @@ function findAppliedDatesByUser(userId) {
   });
 }
 
-export {
+export default {
   create,
   findMany,
   count,
