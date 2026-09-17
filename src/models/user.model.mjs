@@ -20,4 +20,4 @@ function update(id, data) {
   return prisma.user.update({ where: { id }, data });
 }
 
-export { findById, findByEmail, findByGoogleId, create, update };
+export default { findById, findByEmail, findByGoogleId, create, update };

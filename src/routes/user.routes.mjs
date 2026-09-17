@@ -1,0 +1,14 @@
+import express from "express";
+import userController from "../controllers/user.controller.mjs";
+import authGuard from "../middlewares/auth.middleware.mjs";
+
+const router = express.Router();
+
+router.use(authGuard);
+
+router.get("/me", userController.getProfile);
+router.put("/me/home-address", userController.updateHomeAddress);
+router.put("/me/theme", userController.updateTheme);
+router.put("/me/change-password", userController.changePassword);
+
+export default router;

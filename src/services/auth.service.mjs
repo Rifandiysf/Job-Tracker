@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { findByEmail, findByGoogleId, create, update } from "../models/user.model.mjs";
+import userModel from "../models/user.model.mjs";
 import { create as createResetToken, findByToken, markUsed } from "../models/passwordResetToken.model.mjs";
 import { signToken } from "../utils/jwt.mjs";
 import { sendResetPasswordEmail } from "../utils/mailer.mjs";
@@ -8,7 +8,7 @@ import { sendResetPasswordEmail } from "../utils/mailer.mjs";
 const RESET_TOKEN_EXPIRY_MINUTES = 30;
 
 async function register({ name, email, password }) {
-    const existing = await findByEmail(email);
+    const existing = await userModel.findByEmail(email);
     if (existing) {
         const err = new Error("Email sudah terdaftar");
         err.statusCode = 409;
@@ -16,14 +16,14 @@ async function register({ name, email, password }) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await create({ name, email, password: hashedPassword, provider: "local" });
+    const user = await userModel.create({ name, email, password: hashedPassword, provider: "local" });
     const token = signToken({ id: user.id, email: user.email });
 
     return { user: sanitizeUser(user), token };
 }
 
 async function login({ email, password }) {
-    const user = await findByEmail(email);
+    const user = await userModel.findByEmail(email);
     if (!user || !user.password) {
         const err = new Error("Email atau password salah");
         err.statusCode = 401;
@@ -42,13 +42,13 @@ async function login({ email, password }) {
 }
 
 async function findOrCreateGoogleUser({ googleId, email, name, avatarUrl }) {
-    let user = await findByGoogleId(googleId);
+    let user = await userModel.findByGoogleId(googleId);
 
     if (!user) {
-        user = await findByEmail(email);
+        user = await userModel.findByEmail(email);
 
         if (user) {
-            user = await update(user.id, {
+            user = await userModel.update(user.id, {
                 googleId,
                 provider: "google",
                 avatarUrl: avatarUrl || user.avatarUrl,
@@ -56,7 +56,7 @@ async function findOrCreateGoogleUser({ googleId, email, name, avatarUrl }) {
             });
         } else {
             const randomPassword = await bcrypt.hash(crypto.randomUUID(), 10);
-            user = await create({
+            user = await userModel.create({
                 name,
                 email,
                 googleId,
@@ -73,7 +73,7 @@ async function findOrCreateGoogleUser({ googleId, email, name, avatarUrl }) {
 }
 
 async function requestPasswordReset(email) {
-    const user = await findByEmail(email);
+    const user = await userModel.findByEmail(email);
     if (!user) return;
 
     const token = crypto.randomBytes(32).toString("hex");
@@ -95,7 +95,7 @@ async function resetPassword({ token, newPassword }) {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await update(resetToken.userId, { password: hashedPassword });
+    await userModel.update(resetToken.userId, { password: hashedPassword });
     await markUsed(resetToken.id);
 }
 
