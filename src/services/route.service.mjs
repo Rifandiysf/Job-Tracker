@@ -2,20 +2,72 @@ const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 const OSRM_URL = "https://router.project-osrm.org/route/v1/driving";
 
 async function geocodeAddress(address) {
-  const url = `${NOMINATIM_URL}?q=${encodeURIComponent(address)}&format=json&limit=1`;
+  const queries = [
+    address,
+    address.replace(/\bNo\.?\s*\d+\b/gi, ""),
+    address
+      .replace(/\bNo\.?\s*\d+\b/gi, "")
+      .replace(/Kec\.?\s*[^,]+,?/gi, "")
+      .replace(/\b\d{5}\b/g, ""),
+    address
+      .replace(/\bNo\.?\s*\d+\b/gi, "")
+      .replace(/Kec\.?\s*[^,]+,?/gi, "")
+      .replace(/\b\d{5}\b/g, ""),
+  ];
 
-  const res = await fetch(url, {
-    headers: { "User-Agent": "job-tracker-app" },
-  });
-  const data = await res.json();
+  const uniqueQueries = [
+    ...new Set(
+      queries.map((query) =>
+        query.replace(/\s+/g, " ").replace(/,\s*,/g, ",").trim()
+      )
+    ),
+  ];
 
-  if (!data.length) {
-    const err = new Error(`Alamat "${address}" tidak ditemukan`);
-    err.statusCode = 422;
-    throw err;
+  for (const query of uniqueQueries) {
+    console.log("Mencoba geocode:", query);
+
+    const params = new URLSearchParams({
+      q: query,
+      format: "jsonv2",
+      limit: "1",
+      countrycodes: "id",
+      addressdetails: "1",
+    });
+
+    const res = await fetch(`${NOMINATIM_URL}?${params}`, {
+      headers: {
+        "User-Agent": "jobfin/1.0",
+        "Accept-Language": "id",
+      },
+    });
+
+    if (!res.ok) {
+      console.log("Nominatim error:", res.status);
+      continue;
+    }
+
+    const data = await res.json();
+
+    console.log("Hasil:", data);
+
+    if (data.length > 0) {
+      const result = data[0];
+
+      return {
+        lat: parseFloat(result.lat),
+        lng: parseFloat(result.lon),
+        displayName: result.display_name,
+      };
+    }
   }
 
-  return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  const err = new Error(
+    `Alamat "${address}" tidak ditemukan`
+  );
+
+  err.statusCode = 422;
+
+  throw err;
 }
 
 async function calculateRoute({ fromLat, fromLng, toLat, toLng }) {
