@@ -65,7 +65,7 @@ async function listJobs(userId, { status, search, page = 1, limit = 10 }) {
 async function getJobById(userId, id) {
   const job = await jobModel.findFirstByUser(Number(id), userId);
   if (!job) {
-    const err = new Error("Lamaran tidak ditemukan");
+    const err = new Error("Application not found");
     err.statusCode = 404;
     throw err;
   }

@@ -16,7 +16,7 @@ async function updateHomeAddress(userId, homeAddress) {
 
 async function updateTheme(userId, theme) {
   if (!["light", "dark"].includes(theme)) {
-    const err = new Error("Tema harus 'light' atau 'dark'");
+    const err = new Error("Theme must be either 'light' or 'dark'.");
     err.statusCode = 422;
     throw err;
   }
@@ -30,7 +30,7 @@ async function changePassword(userId, { currentPassword, newPassword }) {
 
   const isMatch = await bcrypt.compare(currentPassword, user.password);
   if (!isMatch) {
-    const err = new Error("Password saat ini salah");
+    const err = new Error("Current password is incorrect.");
     err.statusCode = 401;
     throw err;
   }

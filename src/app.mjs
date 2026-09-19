@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
-app.get("/", (req, res) => res.json({ message: "Job Tracker API is running" }));
+app.get("/", (req, res) => res.json({ message: "JobFin API is running" }));
 
 app.use("/api/v1", routes);
 

@@ -11,8 +11,6 @@ passport.use(
       callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     (accessToken, refreshToken, profile, done) => {
-      // profile diteruskan apa adanya ke authController.googleCallback
-      // lewat req.user (session: false, jadi tidak disimpan ke session)
       return done(null, profile);
     }
   )

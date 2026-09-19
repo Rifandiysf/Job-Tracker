@@ -10,7 +10,7 @@ const RESET_TOKEN_EXPIRY_MINUTES = 30;
 async function register({ name, email, password }) {
     const existing = await userModel.findByEmail(email);
     if (existing) {
-        const err = new Error("Email sudah terdaftar");
+        const err = new Error("Email is already registered.");
         err.statusCode = 409;
         throw err;
     }
@@ -25,14 +25,14 @@ async function register({ name, email, password }) {
 async function login({ email, password }) {
     const user = await userModel.findByEmail(email);
     if (!user || !user.password) {
-        const err = new Error("Email atau password salah");
+        const err = new Error("Invalid email or password.");
         err.statusCode = 401;
         throw err;
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        const err = new Error("Email atau password salah");
+        const err = new Error("Invalid email or password.");
         err.statusCode = 401;
         throw err;
     }
@@ -89,7 +89,7 @@ async function resetPassword({ token, newPassword }) {
     const resetToken = await findByToken(token);
 
     if (!resetToken || resetToken.usedAt || resetToken.expiresAt < new Date()) {
-        const err = new Error("Token reset password tidak valid atau sudah kedaluwarsa");
+        const err = new Error("Invalid or expired password reset token.");
         err.statusCode = 400;
         throw err;
     }

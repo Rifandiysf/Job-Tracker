@@ -9,10 +9,6 @@ async function geocodeAddress(address) {
       .replace(/\bNo\.?\s*\d+\b/gi, "")
       .replace(/Kec\.?\s*[^,]+,?/gi, "")
       .replace(/\b\d{5}\b/g, ""),
-    address
-      .replace(/\bNo\.?\s*\d+\b/gi, "")
-      .replace(/Kec\.?\s*[^,]+,?/gi, "")
-      .replace(/\b\d{5}\b/g, ""),
   ];
 
   const uniqueQueries = [
@@ -24,8 +20,6 @@ async function geocodeAddress(address) {
   ];
 
   for (const query of uniqueQueries) {
-    console.log("Mencoba geocode:", query);
-
     const params = new URLSearchParams({
       q: query,
       format: "jsonv2",
@@ -36,7 +30,7 @@ async function geocodeAddress(address) {
 
     const res = await fetch(`${NOMINATIM_URL}?${params}`, {
       headers: {
-        "User-Agent": "jobfin/1.0",
+        "User-Agent": "JobFin/1.0 (rifandiyusuf47@gmail.com)",
         "Accept-Language": "id",
       },
     });
@@ -47,8 +41,6 @@ async function geocodeAddress(address) {
     }
 
     const data = await res.json();
-
-    console.log("Hasil:", data);
 
     if (data.length > 0) {
       const result = data[0];
@@ -62,7 +54,7 @@ async function geocodeAddress(address) {
   }
 
   const err = new Error(
-    `Alamat "${address}" tidak ditemukan`
+    `Address "${address}" not found.`
   );
 
   err.statusCode = 422;
@@ -77,7 +69,7 @@ async function calculateRoute({ fromLat, fromLng, toLat, toLng }) {
   const data = await res.json();
 
   if (data.code !== "Ok" || !data.routes?.length) {
-    const err = new Error("Rute tidak dapat dihitung untuk koordinat ini");
+    const err = new Error("Unable to calculate a route for these coordinates.");
     err.statusCode = 422;
     throw err;
   }

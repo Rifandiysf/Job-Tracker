@@ -5,7 +5,7 @@ function authGuard(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return error(res, 401, "Token tidak ditemukan, silakan login terlebih dahulu");
+        return error(res, 401, "Token not found. Please log in first.");
     }
 
     const token = authHeader.split(" ")[1];
@@ -15,7 +15,7 @@ function authGuard(req, res, next) {
         req.user = decoded;
         next();
     } catch (err) {
-        return error(res, 401, "Token tidak valid atau sudah kedaluwarsa");
+        return error(res, 401, "Invalid or expired token.");
     }
 }
 
